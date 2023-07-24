@@ -15,3 +15,7 @@
 
 # The final executable
 api 
+
+# Test outputs
+coverage.out
+cover.html
