@@ -57,3 +57,28 @@ jobs:
       with:
         name: api
         path: artifacts
+
+  deploy:
+    name: Release
+    needs: [test, build]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Download binary
+      uses: actions/download-artifact@v2
+      with:
+        name: api
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: |
+          Still in experimentation phase
+        draft: true
+        prerelease: true
+    
