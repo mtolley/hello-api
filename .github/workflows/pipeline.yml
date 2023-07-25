@@ -58,6 +58,33 @@ jobs:
         name: api
         path: artifacts
 
+  deploy-function:
+    name: Deploy FaaS
+    runs-on: ubuntu-latest
+    needs: [test, build]
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - id: auth
+        uses: google-github-actions/auth@v1
+        with:
+          service_account: ${{ secrets.gcp_service_account_email }}
+          credentials_json: ${{ secrets.gcp_credentials }}
+
+      - name: Deploy function
+        id: deploy
+        uses: google-github-actions/deploy-cloud-functions@main
+        with:
+          name: translate
+          entry_point: Translate 
+          runtime: go116
+          
+      - id: test
+        run: curl "${{ steps.deploy.outputs.url }}/hello"
+
   deploy:
     name: Release
     needs: [test, build]
@@ -92,4 +119,3 @@ jobs:
         asset_path: api
         asset_name: api
         asset_content_type: application/octet-stream
-    
