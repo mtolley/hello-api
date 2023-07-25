@@ -62,6 +62,8 @@ jobs:
     name: Release
     needs: [test, build]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -81,4 +83,13 @@ jobs:
           Still in experimentation phase
         draft: true
         prerelease: true
+    - name: Upload Release Binary
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: api
+        asset_name: api
+        asset_content_type: application/octet-stream
     
