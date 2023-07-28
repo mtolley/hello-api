@@ -77,6 +77,8 @@ jobs:
         uses: google-github-actions/deploy-appengine@main
         with: 
           project_id: ${{ secrets.gcp_project_id }}
+      - id: test
+        run: curl "${{ steps.deploy.outputs.url }}/translate/hello"
 
   deploy-function:
     name: Deploy FaaS
